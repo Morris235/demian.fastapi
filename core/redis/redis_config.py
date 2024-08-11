@@ -1,16 +1,11 @@
-import os
-from dotenv import load_dotenv
-import redis
+from redis.asyncio import Redis
 
-load_dotenv()
+REDIS_URL = "redis://localhost:6379"
 
 
-def redis_config():
+async def get_redis() -> Redis:
+    redis = Redis.from_url(REDIS_URL, encoding="utf-8", decode_responses=True)
     try:
-        REDIS_HOST = str = os.getenv("REDIS_HOST")
-        REDIS_PORT = integer = os.getenv("REDIS_PORT")
-        REDIS_DATABASE = integer = os.getenv("REDIS_DATABASE")
-        rd = redis.Redis(host=REDIS_HOST, port=REDIS_PORT, db=REDIS_DATABASE)
-
-    except:
-        print("redis connection failure")
+        yield redis
+    finally:
+        await redis.close()
