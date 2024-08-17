@@ -10,15 +10,34 @@ class ModelName(str, Enum):
     lenet = "lenet"
 
 
+class Item(BaseModel):
+    name: str
+    description: Union[str, None] = None
+    price: float
+    tax: Union[float, None] = None
+    is_offer: Union[bool, None] = None
+
+
 fake_items_db = [{"item_name": "Foo"}, {"item_name": "Bar"}, {"item_name": "Baz"}]
 
 app = FastAPI()
 
 
-class Item(BaseModel):
-    name: str
-    price: float
-    is_offer: Union[bool, None] = None
+@app.post("/items/")
+async def create_item(item: Item):
+    item_dict = item.model_dump()
+    if item.tax:
+        price_with_tax = item.price + item.tax
+        item_dict.update({"price_with_tax": price_with_tax})
+    return item_dict
+
+
+@app.put("/items/{item_id}")
+def update_item(item_id: str, item: Item, q: Union[str, None] = None):
+    result = {"item_id": item_id, **item.model_dump()}
+    if q:
+        result.update({"q": q})
+    return {"item_name": item.name, "item_id": item_id, **item.model_dump()}
 
 
 @app.get("/")
@@ -52,8 +71,3 @@ async def get_model(model_name: ModelName):
         return {"model_name": model_name, "message": "LeCNN all the images"}
 
     return {"model_name": model_name, "message": "Have some residuals"}
-
-
-@app.put("/items/{item_id}")
-def update_item(item_id: str, item: Item):
-    return {"item_name": item.name, "item_id": item_id}
