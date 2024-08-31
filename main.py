@@ -3,6 +3,57 @@ from fastapi import FastAPI
 from pydantic import BaseModel
 from enum import Enum
 
+from PySide6.QtWidgets import QApplication, QMainWindow
+from PySide6.QtUiTools import QUiLoader
+from PySide6.QtCore import QObject, QEvent, QTimer, QCoreApplication
+
+import sys
+from main_window import Main_window
+from balance_window import Balance_window
+
+from apscheduler.schedulers.asyncio import AsyncIOScheduler
+from apscheduler.schedulers.qt import QtScheduler
+
+from dotenv import load_dotenv
+import os
+
+# load .env
+load_dotenv()
+
+loader = QUiLoader()
+
+app = QApplication(sys.argv)
+
+the_path = os.path.dirname(__file__)
+os.environ['ROOT_FILE_PATH'] = the_path
+
+SHUT_DOWN_FLAG = False
+
+# 이 부분은 MacOS에서는 사용할 수 없으므로 주석 처리하거나 제거합니다.
+# 이베스트 로그인 및 Windows 전용 부분은 삭제
+
+# balance_window는 여전히 사용 가능
+balance_window = Balance_window()
+
+# 세션 및 로그인 로직 관련 부분 제거
+# 대신, 다른 MacOS 관련 코드 또는 REST API 등을 사용할 수 있습니다.
+
+window = Main_window()  # session과 balance_window는 필요하지 않습니다.
+window.show()
+
+# MacOS에서 사용하는 스케줄러는 유지됩니다.
+scheduler = QtScheduler()
+
+# 예시 작업 추가 (여기서는 5초마다 실행되는 간단한 작업을 추가)
+def yeah():
+    print('YEAH!!!!')
+
+scheduler.add_job(yeah, 'interval', seconds=5)
+scheduler.start()
+
+# 메인 이벤트 루프 실행
+app.exec_()
+
 
 class ModelName(str, Enum):
     alexnet = "alexnet"
