@@ -1,2 +1,4 @@
 .python-version
 /__pycache__
+api/v1/config.py
+/api
