@@ -1,5 +1,5 @@
 .python-version
 /__pycache__
-api/v1/config.py
+api/v1/env.py
 /api
 token_cache.json
