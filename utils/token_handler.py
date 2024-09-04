@@ -32,7 +32,8 @@ def response_delete_token():
     if has_token_file:
         if os.path.getsize(TOKEN_FILE) != 0:
             token_data: dict[str, int | None] = load_token_from_file()
-            delete_token(token_data["access_token"])
-            with open(TOKEN_FILE, "w") as f:
-                f.truncate(0)
-                f.close()
+            if token_data["expires_in"] < second_today():
+                delete_token(token_data["access_token"])
+                with open(TOKEN_FILE, "w") as f:
+                    f.truncate(0)
+                    f.close()
