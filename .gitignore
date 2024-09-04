@@ -3,3 +3,4 @@
 api/v1/env.py
 /api
 token_cache.json
+websocket_cache.json
