@@ -1,19 +1,13 @@
 import json
-import os.path
-
-from api.v1.oauth import get_token, delete_token
+from api.v1.oauth import get_token
 from operations import redis_operations
 from operations.redis_operations import redis_client
-from utils.time_utils import second_today
-
-TOKEN_FILE = "token_cache.json"
 
 def save_token_cache(token_data):
-    redis_operations.set_value(f"token", json.dumps(token_data))
-    redis_client.expire("token", 86400)
+    redis_client.set(f"token", json.dumps(token_data), ex=86400)
 
 def load_token_cache() ->  dict[str, int | None]:
-    token = redis_operations.get_value("token")
+    token = redis_client.get("token")
     if token is not None:
         print(token)
         return json.loads(token)

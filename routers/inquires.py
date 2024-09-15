@@ -1,6 +1,6 @@
 from fastapi import APIRouter
 
-from api.v1.local.inquire import inquire_price
+from api.v1.domestic.inquire import inquire_price
 from utils.time_utils import second_today
 from utils.token_handler import load_token_cache
 
