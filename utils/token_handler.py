@@ -1,6 +1,5 @@
 import json
 from api.v1.oauth import get_token
-from operations import redis_operations
 from operations.redis_operations import redis_client
 
 def save_token_cache(token_data):
