@@ -1,6 +1,6 @@
 .python-version
 /__pycache__
-api/v1/env.py
+api/v1/api_env.py
 /api
 token_cache.json
 websocket_cache.json
