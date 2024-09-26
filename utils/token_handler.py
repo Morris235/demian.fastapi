@@ -1,12 +1,14 @@
 import json
 from api.v1.oauth import get_token
-from operations.redis_operations import redis_client
+from core.redis_config import redis_config
+
+rd = redis_config()
 
 def save_token_cache(token_data):
-    redis_client.set(f"token", json.dumps(token_data), ex=86400)
+    rd.set(f"token", json.dumps(token_data), ex=86400)
 
 def load_token_cache() ->  dict[str, int | None]:
-    token = redis_client.get("token")
+    token = rd.get("token")
     if token is not None:
         print(token)
         return json.loads(token)

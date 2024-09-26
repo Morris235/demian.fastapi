@@ -6,7 +6,7 @@ from core.core_env import krx_markets
 
 rd = redis_config()
 
-def update_code_krx():
+def krx_stock_code_update():
     timestamp = time.time()
     stock_data_dict = {'timestamp':timestamp}
     hash_key = 'stock_code_'
@@ -24,7 +24,7 @@ def update_code_krx():
 
 async def main():
     try:
-        update_code_krx()
+        krx_stock_code_update()
     except Exception as e:
         print(e)
 
