@@ -11,8 +11,8 @@ def today_to_sec() -> float:
 
 def get_last_month_date():
     today = datetime.today()
-    last_month_first = datetime(today.year, today.month, 1) + relativedelta(month=1)
-    return last_month_first.strftime("%Y-%m-%d")
+    last_month_date = datetime(today.year, today.month-1, 1)
+    return last_month_date.strftime("%Y-%m")
 
 def get_krx_market_business_days(year : int, month : int) -> list[str] :
     business_date : list[datetime] = stock.get_previous_business_days(year=year, month=month)
@@ -26,7 +26,7 @@ def get_krx_market_business_days(year : int, month : int) -> list[str] :
 # 1분 단위 주가는 한번 요청에 7일간의 데이터만 가져올수 있다.
 # 15분 단위 주가는 한번 요청에 60일간의 데이터만 가져올수 있다.
 # 1시간 단위 주가는 한번 요청에 730일간의 데이터만 가져올수 있다.
-def business_last_days(interval: StockDataInterval, year: int = datetime.now().year, month: int = datetime.now().month) -> list[str]:
+def get_business_last_days(interval: StockDataInterval, month: int,  year: int = datetime.now().year) -> list[str]:
     match interval:
         case interval.ONE_MIN:
             return get_krx_market_business_days(year, month)[-7:]

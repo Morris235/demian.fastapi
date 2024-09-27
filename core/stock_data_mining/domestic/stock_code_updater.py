@@ -7,7 +7,7 @@ import time
 import pandas
 from core.redis_config import redis_config
 from core.core_env import krx_markets, StockDataInterval
-from utils.time_utils import business_last_days
+from utils.time_utils import get_business_last_days, get_last_month_date
 
 rd = redis_config()
 
@@ -31,10 +31,9 @@ def set_stock_codes():
 # 매달 1일에 자동 실행 : 조건에 부합하는 전 달의 모든 주가종목을 update한다.
 def set_target_stock_codes(interval: StockDataInterval = StockDataInterval.DAY, base_vol: int = 500000):
     try:
-        now = dt.now()
-        last_month = now.date().month-1
+        last_month = dt.now().date().month-1
 
-        business_days : list[str] = business_last_days(interval, month=last_month)
+        business_days : list[str] = get_business_last_days(interval, last_month)
         print(business_days)
         for market in krx_markets:
             hash_data: Awaitable[dict] | dict = rd.hgetall("stock_code_"+market.lower())
@@ -48,7 +47,7 @@ def set_target_stock_codes(interval: StockDataInterval = StockDataInterval.DAY, 
 
                 if avg_vol >= base_vol:
                     print(f'market : {market}, stock : ({field}) {value}, avg_vol : {avg_vol}, interval : {interval.value}')
-                    rd.hset(f"target_stock_code_kospi:{now.date()}", field, value)
+                    rd.hset(f"target_stock_code_kospi:{get_last_month_date()}", field, value)
 
     except Exception as e:
         print(e)

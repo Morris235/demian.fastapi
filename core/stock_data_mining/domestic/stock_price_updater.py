@@ -7,16 +7,16 @@ import pandas
 import yfinance as yf
 from core.core_env import krx_markets, StockDataInterval
 from core.redis_config import redis_config
-from utils.time_utils import business_last_days
+from utils.time_utils import get_business_last_days, get_last_month_date
 
 rd = redis_config()
 
 def set_target_stock_price(interval: StockDataInterval = StockDataInterval.FIFTEEN_MIN):
     try:
-        now = dt.now()
-        business_days : list[str] = business_last_days(interval)
+        last_month = dt.now().month-1
+        business_days : list[str] = get_business_last_days(interval, last_month)
         for market in krx_markets:
-            hash_data: Awaitable[dict] | dict = rd.hgetall("target_stock_code_"+market.lower()+f":{now.date()}")
+            hash_data: Awaitable[dict] | dict = rd.hgetall("target_stock_code_" + market.lower() +f":{get_last_month_date()}")
             decode_data: dict = {key.decode('utf-8'): value.decode('utf-8') for key, value in hash_data.items()}
             for field, value in decode_data.items():
                 yf_df: pandas.DataFrame = yf.download(field + '.KS', start=business_days[0], end=business_days[-1], interval=interval.value)
@@ -37,7 +37,7 @@ def set_target_stock_price(interval: StockDataInterval = StockDataInterval.FIFTE
                     }
                     stock_list.append(stock_dict)
                 compressed_data = gzip.compress(json.dumps(stock_list).encode('utf-8'))
-                rd.hset(f"target_stock_price_kospi:{now.date()}", field, compressed_data)
+                rd.hset(f"target_stock_price_kospi:{get_last_month_date()}", field, compressed_data)
 
     except Exception as e:
         print(e)
