@@ -1,6 +1,6 @@
 from datetime import datetime, timedelta
 from pykrx import stock
-
+from dateutil.relativedelta import relativedelta
 from core.core_env import StockDataInterval
 
 def today_to_sec() -> float:
@@ -9,7 +9,12 @@ def today_to_sec() -> float:
     end_of_day = start_of_data + timedelta(days=1) - timedelta(seconds=1)
     return (end_of_day - start_of_data).total_seconds()
 
-def get_current_business_days(year : int, month : int) -> list[str] :
+def get_last_month_date():
+    today = datetime.today()
+    last_month_first = datetime(today.year, today.month, 1) + relativedelta(month=1)
+    return last_month_first.strftime("%Y-%m-%d")
+
+def get_krx_market_business_days(year : int, month : int) -> list[str] :
     business_date : list[datetime] = stock.get_previous_business_days(year=year, month=month)
     business_days : list[str] = []
     for day in business_date:
@@ -24,10 +29,10 @@ def get_current_business_days(year : int, month : int) -> list[str] :
 def business_last_days(interval: StockDataInterval, year: int = datetime.now().year, month: int = datetime.now().month) -> list[str]:
     match interval:
         case interval.ONE_MIN:
-            return get_current_business_days(year, month)[-7:]
+            return get_krx_market_business_days(year, month)[-7:]
         case interval.FIFTEEN_MIN:
-            return get_current_business_days(year, month)[-60:]
+            return get_krx_market_business_days(year, month)[-60:]
         case interval.HOUR:
-            return get_current_business_days(year, month)[-730:]
+            return get_krx_market_business_days(year, month)[-730:]
         case interval.DAY:
-            return get_current_business_days(year, month)
+            return get_krx_market_business_days(year, month)

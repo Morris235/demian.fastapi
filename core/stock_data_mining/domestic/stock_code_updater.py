@@ -5,8 +5,6 @@ import yfinance as yf
 import FinanceDataReader as fdr
 import time
 import pandas
-from dateutil.relativedelta import relativedelta
-
 from core.redis_config import redis_config
 from core.core_env import krx_markets, StockDataInterval
 from utils.time_utils import business_last_days
@@ -30,18 +28,13 @@ def stock_code_update():
                 print(f"update stock code {market} : {key}")
                 rd.hset(hash_key+market.lower(), key, value)
 
-def get_last_month_date():
-    today = datetime.today()
-    last_month_first = datetime(today.year, today.month, 1) + relativedelta(month=1)
-    return last_month_first.strftime("%Y-%m-%d")
-
 # 매달 1일에 자동 실행 : 조건에 부합하는 전 달의 모든 주가종목을 update한다.
 def target_stock_code_update(interval: StockDataInterval = StockDataInterval.DAY, base_vol: int = 500000):
     try:
         now = dt.now()
-        month = now.date().month
+        last_month = now.date().month-1
 
-        business_days : list[str] = business_last_days(interval, month=month)
+        business_days : list[str] = business_last_days(interval, month=last_month)
         print(business_days)
         for market in krx_markets:
             hash_data: Awaitable[dict] | dict = rd.hgetall("stock_code_"+market.lower())
