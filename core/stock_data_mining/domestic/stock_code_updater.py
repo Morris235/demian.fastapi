@@ -12,7 +12,7 @@ from utils.time_utils import business_last_days
 rd = redis_config()
 
 # 매달 1일에 자동 실행
-def stock_code_update():
+def set_stock_codes():
     timestamp = time.time()
     stock_data_dict = {'timestamp':timestamp}
     hash_key = 'stock_code_'
@@ -29,7 +29,7 @@ def stock_code_update():
                 rd.hset(hash_key+market.lower(), key, value)
 
 # 매달 1일에 자동 실행 : 조건에 부합하는 전 달의 모든 주가종목을 update한다.
-def target_stock_code_update(interval: StockDataInterval = StockDataInterval.DAY, base_vol: int = 500000):
+def set_target_stock_codes(interval: StockDataInterval = StockDataInterval.DAY, base_vol: int = 500000):
     try:
         now = dt.now()
         last_month = now.date().month-1
@@ -55,8 +55,8 @@ def target_stock_code_update(interval: StockDataInterval = StockDataInterval.DAY
 
 async def main():
     try:
-        # stock_code_update()
-        target_stock_code_update()
+        # set_stock_codes()
+        set_target_stock_codes()
     except Exception as e:
         print(e)
 

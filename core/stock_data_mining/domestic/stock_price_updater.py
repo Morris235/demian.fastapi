@@ -11,7 +11,7 @@ from utils.time_utils import business_last_days
 
 rd = redis_config()
 
-def target_stock_price_update(interval: StockDataInterval = StockDataInterval.FIFTEEN_MIN):
+def set_target_stock_price(interval: StockDataInterval = StockDataInterval.FIFTEEN_MIN):
     try:
         now = dt.now()
         business_days : list[str] = business_last_days(interval)
@@ -48,7 +48,7 @@ async def main():
         # 저장된 1 달간의 주가 데이터 기준,
         # 조건에(거래량, 상승/하락 폭, 체결 강도 등등. 이 부분은 어떤 종목의 조건이 데이트레이딩에 적합한지 공부 필요) 거래량 30만 이상의 조건에 부합하는 종목에 대해서만 저장
         # -> 이 데이터를 기준으로 승률이 높은 종목을 분석
-        target_stock_price_update()
+        set_target_stock_price()
     except Exception as e:
          print(e)
 
