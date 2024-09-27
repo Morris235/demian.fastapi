@@ -3,7 +3,6 @@ from pykrx import stock
 
 from core.core_env import StockDataInterval
 
-
 def today_to_sec() -> float:
     now = datetime.now()
     start_of_data = datetime(now.year, now.month, now.day)
@@ -11,9 +10,9 @@ def today_to_sec() -> float:
     return (end_of_day - start_of_data).total_seconds()
 
 def get_current_business_days(year : int, month : int) -> list[str] :
-    business_datetime : list[datetime] = stock.get_previous_business_days(year=year, month=month)
+    business_date : list[datetime] = stock.get_previous_business_days(year=year, month=month)
     business_days : list[str] = []
-    for day in business_datetime:
+    for day in business_date:
         business_days.append(str(day).split(' ')[0])
     return business_days
 
