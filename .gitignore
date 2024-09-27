@@ -5,3 +5,4 @@ api/v1/api_env.py
 token_cache.json
 websocket_cache.json
 dump.rdb
+.env.py
